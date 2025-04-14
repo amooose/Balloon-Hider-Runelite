@@ -32,6 +32,8 @@ public class BalloonHiderPlugin extends Plugin {
     @Inject
     private BalloonHiderConfig config;
 
+    //1 = Basket
+    //2 = Balloon
     private final Map<Integer, Integer> ballonType = new HashMap<>(
             Map.of(
                     19133,1,
@@ -57,6 +59,8 @@ public class BalloonHiderPlugin extends Plugin {
             }
         }
     }
+
+    //Needed to re-apply deletion when plugin is restarted
     @Override
     protected void startUp() throws Exception
     {
@@ -68,7 +72,7 @@ public class BalloonHiderPlugin extends Plugin {
         refreshObjects(true); // Restore all hidden objects when the plugin is turned off
     }
 
-    private void checkTile(Tile currTile, Scene scene) {
+    private void checkTileForBalloon(Tile currTile, Scene scene) {
         if (currTile != null) {
             GameObject[] objects = currTile.getGameObjects();
             if (objects != null) {
@@ -87,25 +91,21 @@ public class BalloonHiderPlugin extends Plugin {
     }
 
     private void removeBalloon(Scene scene) {
-        //Scene scene = client.getScene();
         Tile[][][] tiles = scene.getExtendedTiles();
         //Only check 104+ since we handle close object removal via onGameObjectSpawned
         for (int x = 104; x < Constants.EXTENDED_SCENE_SIZE; ++x) {
             for (int y = 104; y < Constants.EXTENDED_SCENE_SIZE; ++y) {
-                checkTile(tiles[1][x][y],scene);
+                checkTileForBalloon(tiles[1][x][y],scene);
                 if(config.hideBasket()){
-                    checkTile(tiles[0][x][y],scene);
+                    checkTileForBalloon(tiles[0][x][y],scene);
                 }
             }
         }
-
-
     }
 
     @Subscribe
     public void onPreMapLoad(PreMapLoad preMapLoad) {
         removeBalloon(preMapLoad.getScene());
-
     }
 
     private int getBalloonType(int id){
@@ -126,7 +126,6 @@ public class BalloonHiderPlugin extends Plugin {
 
     @Subscribe
     public void onConfigChanged(ConfigChanged event) {
-        log.info("plug change " + event.getGroup() + "vs "+BalloonHiderConfig.GROUP);
         if(event.getGroup().equals(BalloonHiderConfig.GROUP)) {
             refreshObjects(true);
         }
