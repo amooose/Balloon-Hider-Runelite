@@ -18,6 +18,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 @Slf4j
 @PluginDescriptor(
         name = "Balloon Hider"
@@ -34,18 +36,14 @@ public class BalloonHiderPlugin extends Plugin {
 
     //1 = Basket
     //2 = Balloon
-    private final Map<Integer, Integer> ballonType = new HashMap<>(
-            Map.of(
-                    19133,1,
-                    19134,2,
-                    19137,1,
-                    19138,2,
-                    19139,1,
-                    19140,2,
-                    19141,1,
-                    19142,2,
-                    19143,1,
-                    19144,2));
+    private final static Map<Integer, Integer> ballonType  = new HashMap<>() {{
+                put(19133,1); put(19134,2); //Entrana
+                put(19135,1); put(19136,2); //Taverley
+                put(19137,1); put(19138,2); //Castle Wars
+                put(19139,1); put(19140,2); //Gnome Stronghold
+                put(19141,1); put(19142,2); //Crafting Guild
+                put(19143,1); put(19144,2); //Varrock
+    }};
 
     public void refreshObjects(boolean doInvokeLater) {
         // Setting the game state to loading forces a full map reload, which will reload all the objects
